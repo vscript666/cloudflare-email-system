@@ -1,0 +1,8 @@
+# Cloudflare Pages 重定向配置
+
+# API 请求转发到 Worker
+/api/* https://cloudflare-email-system123.zupcuronco.workers.dev/api/:splat 200
+/health https://cloudflare-email-system123.zupcuronco.workers.dev/health 200
+
+# 前端页面
+/* /index.html 200

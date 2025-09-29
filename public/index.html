@@ -496,6 +496,13 @@
                 },
 
                 async apiCall(url, method = 'GET', body = null) {
+                    // 自动检测 API 基础 URL
+                    const apiBaseUrl = window.location.hostname.includes('pages.dev') 
+                        ? '' // Pages 环境使用相对路径（通过 _redirects 转发）
+                        : 'https://cloudflare-email-system123.zupcuronco.workers.dev'; // 直接访问 Worker
+                    
+                    const fullUrl = apiBaseUrl + url;
+                    
                     const options = {
                         method,
                         headers: {
@@ -508,7 +515,7 @@
                         options.body = JSON.stringify(body);
                     }
 
-                    const response = await fetch(url, options);
+                    const response = await fetch(fullUrl, options);
                     return await response.json();
                 },
 
