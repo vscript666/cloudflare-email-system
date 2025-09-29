@@ -1,0 +1,41 @@
+{
+  "name": "Cloudflare Email System",
+  "description": "轻量邮箱系统 - 基于 Cloudflare Workers 的邮件收发系统",
+  "repository": "https://github.com/vscript666/cloudflare-email-system",
+  "logo": "https://workers.cloudflare.com/resources/logo/logo.svg",
+  "keywords": ["cloudflare", "workers", "email", "邮箱", "typescript"],
+  "success_url": "/health",
+  "env": {
+    "MAILCHANNELS_API_KEY": {
+      "description": "MailChannels API Key for sending emails (recommended)",
+      "required": false
+    },
+    "RESEND_API_KEY": {
+      "description": "Resend API Key for sending emails (alternative)",
+      "required": false
+    },
+    "SENDGRID_API_KEY": {
+      "description": "SendGrid API Key for sending emails (alternative)",
+      "required": false
+    }
+  },
+  "formation": {
+    "worker": {
+      "quantity": 1,
+      "size": "free"
+    }
+  },
+  "addons": [
+    "cloudflare-d1:free",
+    "cloudflare-r2:free", 
+    "cloudflare-kv:free"
+  ],
+  "buildpacks": [
+    {
+      "url": "https://github.com/cloudflare/workers-buildpack"
+    }
+  ],
+  "scripts": {
+    "postdeploy": "./scripts/setup-resources.sh"
+  }
+}

@@ -1,0 +1,59 @@
+{
+  "name": "轻量邮箱系统",
+  "description": "基于 Cloudflare Workers 的轻量级邮箱系统，支持邮件收发、附件管理、Web界面等功能",
+  "repository": "https://github.com/vscript666/cloudflare-email-system",
+  "logo": "https://workers.cloudflare.com/resources/logo/logo.svg",
+  "success_url": "/",
+  "env": {
+    "MAILCHANNELS_API_KEY": {
+      "description": "MailChannels API 密钥（推荐）- 用于发送邮件",
+      "value": "",
+      "required": false
+    },
+    "RESEND_API_KEY": {
+      "description": "Resend API 密钥（可选）- 用于发送邮件",
+      "value": "",
+      "required": false
+    },
+    "SENDGRID_API_KEY": {
+      "description": "SendGrid API 密钥（可选）- 用于发送邮件",
+      "value": "",
+      "required": false
+    },
+    "SENDER_DOMAIN": {
+      "description": "发送邮件的域名（如：yourdomain.com）",
+      "value": "yourdomain.com",
+      "required": true
+    },
+    "SENDER_EMAIL": {
+      "description": "发送邮件的地址（如：noreply@yourdomain.com）",
+      "value": "noreply@yourdomain.com", 
+      "required": true
+    }
+  },
+  "formation": {
+    "worker": {
+      "plan": "free",
+      "quantity": 1
+    }
+  },
+  "addons": [
+    {
+      "plan": "cloudflare:d1-free"
+    },
+    {
+      "plan": "cloudflare:r2-free"
+    },
+    {
+      "plan": "cloudflare:kv-free"
+    }
+  ],
+  "buildpacks": [
+    {
+      "url": "cloudflare/nodejs"
+    }
+  ],
+  "scripts": {
+    "postdeploy": "wrangler d1 migrations apply email-db"
+  }
+}
