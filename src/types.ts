@@ -9,8 +9,8 @@ export interface Env {
   // KV 存储
   KV: KVNamespace;
   
-  // 队列
-  EMAIL_QUEUE: Queue;
+  // 队列（付费计划功能，免费版本可选）
+  EMAIL_QUEUE?: Queue;
   
   // 环境变量
   ENVIRONMENT: string;

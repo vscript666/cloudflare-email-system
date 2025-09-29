@@ -8,13 +8,12 @@
     "deploy": "wrangler deploy",
     "build": "echo 'Build completed'",
     "test": "echo 'No tests specified'",
-    "setup": "npm run d1:create && npm run r2:create && npm run kv:create && npm run queue:create",
+    "setup": "npm run d1:create && npm run r2:create && npm run kv:create",
     "d1:create": "wrangler d1 create email-db",
     "d1:migrate": "wrangler d1 migrations apply email-db",
     "d1:local": "wrangler d1 migrations apply email-db --local",
     "r2:create": "wrangler r2 bucket create email-attachments",
     "kv:create": "wrangler kv:namespace create KV",
-    "queue:create": "wrangler queues create email-processing",
     "secrets:setup": "echo 'Please set up secrets manually in GitHub repository settings'"
   },
   "dependencies": {

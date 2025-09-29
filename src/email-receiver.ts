@@ -59,13 +59,16 @@ export class EmailReceiver {
         await this.processAttachments(savedMessage.id, emailContent.attachments);
       }
 
-      // 可选：发送到队列进行后续处理
+      // 可选：发送到队列进行后续处理（付费计划功能）
       if (this.env.EMAIL_QUEUE) {
         await this.env.EMAIL_QUEUE.send({
           type: 'email_received',
           messageId: savedMessage.id,
           userId: user.id
         });
+      } else {
+        // 免费计划：直接执行后续处理
+        console.log('免费计划模式：跳过队列处理，直接完成邮件接收');
       }
 
     } catch (error) {

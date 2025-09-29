@@ -25,14 +25,16 @@ export class EmailSender {
       error_message: ''
     });
 
-    // 立即尝试发送或加入队列
+    // 免费计划：直接发送，付费计划：可以使用队列
     if (this.env.EMAIL_QUEUE) {
+      // 付费计划：使用队列异步发送
       await this.env.EMAIL_QUEUE.send({
         type: 'send_email',
         queueItemId: queueItem.id
       });
     } else {
-      // 如果没有队列，直接发送
+      // 免费计划：立即同步发送
+      console.log('免费计划模式：立即发送邮件');
       await this.processSendQueue([queueItem]);
     }
   }

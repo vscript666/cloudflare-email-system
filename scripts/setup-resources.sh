@@ -19,9 +19,9 @@ wrangler r2 bucket create email-attachments || echo "✅ R2 存储桶可能已�
 echo "🗄️ 创建 KV 命名空间..."
 wrangler kv:namespace create "KV" || echo "✅ KV 命名空间可能已存在"
 
-# 创建队列
-echo "📬 创建队列..."
-wrangler queues create email-processing || echo "✅ 队列可能已存在"
+# 创建队列（需要付费计划）
+echo "📬 跳过队列创建（需要付费计划）..."
+# wrangler queues create email-processing || echo "✅ 队列可能已存在"
 
 # 运行数据库迁移
 echo "🗃️ 运行数据库迁移..."

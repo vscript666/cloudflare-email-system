@@ -69,8 +69,14 @@ export default {
     }
   },
 
-  // 队列处理
+  // 队列处理（付费计划功能）
   async queue(batch: MessageBatch<any>, env: Env, ctx: ExecutionContext): Promise<void> {
+    // 只有付费计划才有队列功能
+    if (!env.EMAIL_QUEUE) {
+      console.log('免费计划不支持队列功能');
+      return;
+    }
+
     try {
       console.log(`处理队列批次，包含 ${batch.messages.length} 条消息`);
       
@@ -98,22 +104,21 @@ export default {
         case '0 0 * * *': // 每天午夜
           // 清理过期数据
           if (env.EMAIL_QUEUE) {
+            // 付费计划：使用队列
             await env.EMAIL_QUEUE.send({
               type: 'cleanup_attachments'
             });
+          } else {
+            // 免费计划：直接执行清理
+            const queueHandler = new QueueHandler(env);
+            await queueHandler.handleCleanupAttachments();
           }
           break;
           
         case '0 */6 * * *': // 每6小时
           // 处理待发送邮件
-          const queueHandler = new QueueHandler(env);
-          await queueHandler.handleQueueMessage({
-            messages: [{
-              body: { type: 'process_pending_emails' },
-              ack: () => {},
-              retry: () => {}
-            }]
-          } as any);
+          const emailSender = new EmailSender(env);
+          await emailSender.processSendQueue(); // 直接处理待发送邮件
           break;
           
         default:

@@ -105,8 +105,8 @@ export class QueueHandler {
     }
   }
 
-  // 清理过期附件
-  private async handleCleanupAttachments(): Promise<void> {
+  // 清理过期附件（公开方法，免费计划可直接调用）
+  async handleCleanupAttachments(): Promise<void> {
     try {
       // 清理30天前已删除邮件的附件
       const cutoffDate = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();

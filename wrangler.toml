@@ -28,15 +28,15 @@ binding = "KV"
 id = "your-kv-id"
 preview_id = "your-preview-kv-id"
 
-# 队列（异步任务）
-[[queues.producers]]
-binding = "EMAIL_QUEUE"
-queue = "email-processing"
+# 队列（需要付费计划，免费版本不使用）
+# [[queues.producers]]
+# binding = "EMAIL_QUEUE"
+# queue = "email-processing"
 
-[[queues.consumers]]
-queue = "email-processing"
-max_batch_size = 10
-max_batch_timeout = 30
+# [[queues.consumers]]
+# queue = "email-processing"
+# max_batch_size = 10
+# max_batch_timeout = 30
 
 # Email Workers 配置
 [email]
