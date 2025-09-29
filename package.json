@@ -1,0 +1,27 @@
+{
+  "name": "cloudflare-email-system",
+  "version": "1.0.0",
+  "description": "基于 Cloudflare Workers 的轻量邮箱系统",
+  "main": "src/index.ts",
+  "scripts": {
+    "dev": "wrangler dev",
+    "deploy": "wrangler deploy",
+    "build": "echo 'Build completed'",
+    "test": "echo 'No tests specified'",
+    "setup": "npm run d1:create && npm run r2:create && npm run kv:create && npm run queue:create",
+    "d1:create": "wrangler d1 create email-db",
+    "d1:migrate": "wrangler d1 migrations apply email-db",
+    "d1:local": "wrangler d1 migrations apply email-db --local",
+    "r2:create": "wrangler r2 bucket create email-attachments",
+    "kv:create": "wrangler kv:namespace create KV",
+    "queue:create": "wrangler queues create email-processing",
+    "secrets:setup": "echo 'Please set up secrets manually in GitHub repository settings'"
+  },
+  "dependencies": {
+    "@cloudflare/workers-types": "^4.20240925.0"
+  },
+  "devDependencies": {
+    "wrangler": "^3.78.0",
+    "typescript": "^5.3.3"
+  }
+}

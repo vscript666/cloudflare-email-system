@@ -1,0 +1,92 @@
+name: Deploy to Cloudflare Workers
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:  # 允许手动触发
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    name: Deploy to Cloudflare Workers
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Run tests (if any)
+        run: npm test --if-present
+
+      - name: Build project
+        run: npm run build --if-present
+
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: deploy
+
+  setup-resources:
+    runs-on: ubuntu-latest
+    name: Setup Cloudflare Resources
+    if: github.event_name == 'workflow_dispatch'  # 只在手动触发时运行
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Setup Cloudflare Resources
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          preCommands: |
+            echo "Creating D1 database..."
+            wrangler d1 create email-db || echo "Database may already exist"
+            echo "Creating R2 bucket..."
+            wrangler r2 bucket create email-attachments || echo "Bucket may already exist"
+            echo "Creating KV namespace..."
+            wrangler kv:namespace create "KV" || echo "KV namespace may already exist"
+            echo "Creating queue..."
+            wrangler queues create email-processing || echo "Queue may already exist"
+          command: d1 migrations apply email-db
+
+  deploy-pages:
+    runs-on: ubuntu-latest
+    name: Deploy Frontend to Cloudflare Pages
+    needs: deploy
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/pages-action@v1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: cloudflare-email-system
+          directory: public
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
